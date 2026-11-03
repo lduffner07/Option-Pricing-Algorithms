@@ -1,7 +1,3 @@
-"""
-Option classes: the user-facing API for the library.
-"""
-
 from PricingModels.black_scholes import black_scholes_call
 from PricingModels.black_scholes import black_scholes_put
 from PricingModels.binomial import binomial_call
@@ -34,10 +30,6 @@ class Option:
         self.r = r
 
     def price(self, method="black_scholes", **kwargs):
-        """
-        Subclasses must override this to dispatch to the correct
-        pricing model based on `method`.
-        """
         raise NotImplementedError("Subclasses must implement price().")
 
 class EuropeanCall(Option): # inherits from Option class
