@@ -1,6 +1,5 @@
 """
 Cox-Ross-Rubinstein (CRR) binomial tree pricing.
-Supports both European and American call and put options.
 
 Optimization: use one list of option values and update it in place.
 Time complexity: O(steps^2)
