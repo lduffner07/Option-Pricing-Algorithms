@@ -7,20 +7,28 @@ Auxiliary space complexity: O(steps)
 """
 
 import math
+from numbers import Integral
+from PricingModels.black_scholes import _validate_parameters
 
 # Prices European call/put options
 def _binomial_price(S, K, T, sigma, r, steps, option_type):
     """Price an option by working backward through a binomial tree."""
-    if not isinstance(steps, int) or steps < 1:
+    _validate_parameters(S, K, T, sigma, r)
+    if isinstance(steps, bool) or not isinstance(steps, Integral) or steps < 1:
         raise ValueError("steps must be a positive integer.")
     if option_type not in ("call", "put"):
         raise ValueError("option_type must be 'call' or 'put'.")
+    if T == 0 or sigma == 0:
+        difference = S - K * math.exp(-r * T)
+        return max(difference if option_type == "call" else -difference, 0.0)
 
     # One interval of the binomial tree.
     dt = T / steps
     u = math.exp(sigma * math.sqrt(dt))   # factor for an upward stock move
     d = 1 / u                             # factor for a downward move
     p = (math.exp(r * dt) - d) / (u - d)   # risk-neutral up probability
+    if not 0 <= p <= 1:
+        raise ValueError("Invalid risk-neutral probability; increase the number of tree steps.")
     discount = math.exp(-r * dt)
 
     # Calculate the option payoff at expiry.

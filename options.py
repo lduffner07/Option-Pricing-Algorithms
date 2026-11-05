@@ -1,5 +1,6 @@
 from PricingModels.black_scholes import black_scholes_call
 from PricingModels.black_scholes import black_scholes_put
+from PricingModels.black_scholes import _validate_parameters
 from PricingModels.binomial import binomial_call
 from PricingModels.binomial import binomial_put
 from PricingModels.monte_carlo import monte_carlo_call
@@ -14,14 +15,7 @@ class Option:
     """
 
     def __init__(self, S, K, T, sigma, r):
-        if S <= 0:
-            raise ValueError("Spot price S must be positive.")
-        if K <= 0:
-            raise ValueError("Strike price K must be positive.")
-        if T <= 0:
-            raise ValueError("Time to expiry T must be positive.")
-        if sigma <= 0:
-            raise ValueError("Volatility sigma must be positive.")
+        _validate_parameters(S, K, T, sigma, r)
 
         self.S = S
         self.K = K
@@ -64,4 +58,3 @@ class EuropeanPut(Option):
             return monte_carlo_put(self.S, self.K, self.T, self.sigma, self.r, n_paths=kwargs.get("n_paths", 10000), seed=kwargs.get("seed", None))
         else:
             raise ValueError(f"Unknown pricing method: {method}")
-

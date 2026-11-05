@@ -9,6 +9,7 @@ maximum batch size is fixed at 10,000 paths.
 """
 
 import numpy as np
+from PricingModels.black_scholes import _validate_parameters
 
 
 # Maximum number of simulated prices held in memory at one time.
@@ -27,8 +28,11 @@ def _simulate_terminal_prices(S, T, sigma, r, count, rng):
 
 def _monte_carlo_price(S, K, T, sigma, r, n_paths, seed, option_type):
     """Average payoffs across batches, without saving all paths."""
-    if not isinstance(n_paths, (int, np.integer)) or n_paths < 1:
+    _validate_parameters(S, K, T, sigma, r)
+    if isinstance(n_paths, bool) or not isinstance(n_paths, (int, np.integer)) or n_paths < 1:
         raise ValueError("n_paths must be a positive integer.")
+    if seed is not None and (isinstance(seed, bool) or not isinstance(seed, (int, np.integer)) or seed < 0):
+        raise ValueError("seed must be a nonnegative integer or None.")
     if option_type not in ("call", "put"):
         raise ValueError("option_type must be 'call' or 'put'.")
 
